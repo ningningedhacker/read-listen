@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Read & Listen</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #ffeaf4;
+      background-image: radial-gradient(circle, rgba(255, 234, 244, 0.8), rgba(255, 182, 193, 0.8));
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow:1px 1px 5px #33333368;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 550px;
+      width: 100%;
+      
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      padding: 8px;
+      border: 2px dashed #ffb6c1;
+      border-radius: 10px;
+      background-color: #fff0f5;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    input[type="file"]:hover {
+      background-color: #ffe4ec;
+    }
+
+    #textDisplay {
+  margin-top: 20px;
+  white-space: pre-wrap;
+  background: #fdf6fa;
+  padding: 15px;
+  border-radius: 15px;
+  max-width: 570px; /* Matching the width of .container */
+  max-height: 555px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+    audio {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+      background-color: #fff0f5;
+      outline: none;
+    }
+
+
+    .button {
+  margin-top: 20px;
+  padding: 12px 20px;
+
+  color: white;
+font-family:  'Comic Sans MS', cursive, sans-serif;
+  
+      border-radius: 10px;
+      background-color: #ffb6c1;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 220px;
+
+  transition: background-color 0.3s ease;
+  text-align: center;
+  box-shadow:1px 1px 5px #33333368;
+}
+
+.button:hover {
+    background-color: #fd9eac;
+}
+
+
+
+    /* The sliding panel (hidden by default) */
+    #libraryPanel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 300px;
+      background-color: #fff;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    #libraryPanel.open {
+      transform: translateX(0);
+    }
+
+    #favoriteList {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #favoriteList li {
+      cursor: pointer;
+      margin-bottom: 10px;
+      color: #fca4b1;
+      text-shadow:1px 1px 1px #f9b7c1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .deleteButton {
+  background-color: #ffe6f0;
+  color: #ff69b4;
+  border: 2px solid #ffb6c1;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+}
+
+.deleteButton:hover {
+  background-color: #ff69b4;
+  color: white;
+  border-color: #ff1493;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+
+    .closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #fff0f5;
+  color: #ff1493;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 2px solid #ff69b4;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.2);
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background-color: #ff69b4;
+  color: white;
+  border-color: #ff1493;
+  box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+}
+
+    .closeButton:hover {
+      background-color: #ff84c2;
+    }
+    .button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+/* Custom Audio Player */
+.audio-container {
+  width: 100%;
+  background-color: #ffe6f0;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.5);
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.audio-controls button {
+  background-color: #ffb6c1;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.audio-controls button:hover {
+  background-color: #fd9eac;
+}
+
+
+.audio-progress {
+  flex: 1;
+  height: 5px;
+  background-color: #ffb6c1;
+  border-radius: 10px;
+  margin: 0 10px;
+  cursor: pointer;
+  position: relative; /* Make it a positioned container */
+}
+
+.audio-progress-bar {
+  width: 0;
+  height: 100%;
+  background-color: #ff69b4;
+  border-radius: 10px;
+}
+
+#progressBall {
+  position: absolute;
+  top: -7px; /* Adjust to center on the bar */
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background-color: #ff69b4;
+  border-radius: 50%;
+  transition: left 0.1s linear; /* Smooth transition */
+}
+audio {
+   display: none;  
+}
+
+  </style>
+</head>
+<body>
+  <h1>📖 Read & 🎧 Listen</h1>
+  <div class="container">
+    <label>Upload a PDF file:</label>
+    <input type="file" id="pdfInput" accept="application/pdf" />
+
+    <label>Upload an MP3 audio file:</label>
+    <input type="file" id="audioInput" accept="audio/mpeg" />
+    <audio id="audioPlayer" controls>
+        <source id="audioSource" />
+        Your browser does not support the audio element.
+    </audio>
+    
+    <div class="audio-container" id="audioPlayerContainer" style="display: none;">
+        <div class="audio-controls">
+            <button id="playPauseButton">▶️</button>
+            <div class="audio-progress" id="audioProgress">
+                <div class="audio-progress-bar" id="audioProgressBar"></div>
+                <div id="progressBall"></div> <!-- Ball added here -->
+             </div>
+             
+            <button id="muteButton">🔊</button>
+        </div>
+    </div>
+    
+    
+      </div>
+      
+
+    <div id="textDisplay">📄 PDF text will appear here after uploading...</div>
+    <div class="button-group">
+        <button id="favoriteButton" class="button">⭐ Mark as Favorite</button>
+        <button id="openLibraryButton" class="button">📚 Open Favorites</button>
+      </div>
+      
+      
+  </div>
+
+  <!-- Sliding library panel -->
+  <div id="libraryPanel">
+    <button class="closeButton" onclick="toggleLibrary()">←</button>
+    <h2 style="text-shadow:1px 1px 1px #5a5a5ab5;">Favorite Stories</h2>
+    <ul id="favoriteList"></ul>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script>
+    const pdfInput = document.getElementById('pdfInput');
+    const textDisplay = document.getElementById('textDisplay');
+    const audioInput = document.getElementById('audioInput');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const favoriteButton = document.getElementById('favoriteButton');
+    const openLibraryButton = document.getElementById('openLibraryButton');
+    const libraryPanel = document.getElementById('libraryPanel');
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    pdfInput.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (file && file.type === 'application/pdf') {
+        const fileReader = new FileReader();
+        fileReader.onload = async function () {
+          const typedarray = new Uint8Array(this.result);
+          const pdf = await pdfjsLib.getDocument(typedarray).promise;
+          let text = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const strings = content.items.map(item => item.str);
+            text += strings.join(' ') + '\n\n';
+          }
+          textDisplay.textContent = text;
+          saveSession();
+        };
+        fileReader.readAsArrayBuffer(file);
+      } else {
+        alert("Please upload a valid PDF file.");
+      }
+    });
+
+    audioInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file && file.type === 'audio/mpeg') {
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+        saveSession();
+      } else {
+        alert("Please upload a valid MP3 file.");
+      }
+    });
+
+    // Save session to localStorage
+    function saveSession() {
+      const pdfText = textDisplay.textContent;
+      const audioFile = audioPlayer.src;
+      localStorage.setItem('pdfText', pdfText);
+      localStorage.setItem('audioFile', audioFile);
+    }
+
+    // Load session from localStorage
+    function loadSession() {
+      const savedPdfText = localStorage.getItem('pdfText');
+      const savedAudioFile = localStorage.getItem('audioFile');
+
+      if (savedPdfText) {
+        textDisplay.textContent = savedPdfText;
+      }
+
+      if (savedAudioFile) {
+        audioPlayer.src = savedAudioFile;
+      }
+    }
+
+    // Load favorites from localStorage
+    function loadFavorites() {
+      const favoriteList = document.getElementById('favoriteList');
+      favoriteList.innerHTML = ''; // Clear existing list
+
+      favorites.forEach((favorite, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${favorite.name}`;
+        
+        // Add delete button to each favorite story
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('deleteButton');
+        deleteButton.textContent = '💔';
+        deleteButton.onclick = () => {
+          removeFavorite(index); // Remove from favorites
+        };
+
+        li.appendChild(deleteButton);
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', () => {
+          textDisplay.textContent = favorite.content; // Load the story into the text area
+        });
+        favoriteList.appendChild(li);
+      });
+    }
+
+    // Remove a favorite story
+    function removeFavorite(index) {
+      favorites.splice(index, 1); // Remove the story at the given index
+      localStorage.setItem('favorites', JSON.stringify(favorites)); // Update localStorage
+      loadFavorites(); // Reload favorites list
+    }
+
+    favoriteButton.addEventListener('click', () => {
+      const currentText = textDisplay.textContent;
+      if (currentText) {
+        const storyName = prompt("Enter a name for this story:", "My Favorite Story");
+        if (storyName && !favorites.some(fav => fav.name === storyName)) {
+          favorites.push({ name: storyName, content: currentText });
+          localStorage.setItem('favorites', JSON.stringify(favorites));
+          loadFavorites();
+          alert(`Story "${storyName}" added to favorites!`);
+        } else if (storyName) {
+          alert("This story name is already taken or invalid.");
+        }
+      } else {
+        alert("There is no content to save.");
+      }
+    });
+
+    // Toggle the library open/closed
+    function toggleLibrary() {
+      libraryPanel.classList.toggle('open');
+    }
+
+    // Call load functions when page loads
+    window.onload = function () {
+      loadSession();
+      loadFavorites();
+    };
+
+    // Open library on button click
+    openLibraryButton.addEventListener('click', toggleLibrary);
+  // Initialize the audio player object
+const audio = document.getElementById('audioPlayer');
+const playPauseButton = document.getElementById('playPauseButton');
+const muteButton = document.getElementById('muteButton');
+const audioProgressBar = document.getElementById('audioProgressBar');
+const audioPlayerContainer = document.getElementById('audioPlayerContainer');
+const audioSource = document.getElementById('audioSource');
+
+// Handle play/pause button
+playPauseButton.addEventListener('click', function () {
+   if (audioPlayer.paused) {
+       audioPlayer.play();
+       playPauseButton.textContent = '⏸️';  // Change to pause
+   } else {
+       audioPlayer.pause();
+       playPauseButton.textContent = '▶️';  // Change to play
+   }
+});
+
+// Handle mute button
+muteButton.addEventListener('click', function() {
+  audio.muted = !audio.muted;
+  muteButton.textContent = audio.muted ? '🔇' : '🔊'; // Toggle mute/unmute icon
+});
+
+// Update progress bar as the audio plays
+audio.addEventListener('timeupdate', function() {
+  const progress = (audio.currentTime / audio.duration) * 100;
+  audioProgressBar.style.width = `${progress}%`;
+});
+
+// When a new MP3 file is uploaded
+audioInput.addEventListener('change', function () {
+   const file = this.files[0];
+   if (file && file.type === 'audio/mpeg') {
+     const url = URL.createObjectURL(file);
+     audioPlayer.src = url;
+     document.getElementById('audioPlayerContainer').style.display = 'block'; // Show custom controls
+     saveSession();
+   } else {
+     alert("Please upload a valid MP3 file.");
+   }
+ });
+// Function to update the ball position based on audio progress
+audioPlayer.addEventListener('timeupdate', () => {
+  const progressPercentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+  progressBall.style.left = `calc(${progressPercentage}% - 7px)`; // Adjust to center the ball
+  audioProgressBar.style.width = `${progressPercentage}%`; // Optionally adjust progress bar width
+});
+
+// Optional: Click to seek to a specific time in the audio
+audioProgressBar.addEventListener('click', (event) => {
+  const offsetX = event.offsetX;
+  const totalWidth = audioProgressBar.offsetWidth;
+  const newTime = (offsetX / totalWidth) * audioPlayer.duration;
+  audioPlayer.currentTime = newTime;
+});
+
+
+
+const audioProgress = document.getElementById('audioProgress');
+
+const progressBall = document.getElementById('progressBall');
+
+
+audioPlayer.addEventListener('timeupdate', function () {
+  const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+  audioProgressBar.style.width = `${progress}%`;
+
+  // Move the ball along the progress bar
+  progressBall.style.left = `calc(${progress}% - 7px)`; // Adjust to center the ball
+});
+
+// Allow user to click on the progress bar to seek
+audioProgress.addEventListener('click', function (event) {
+  const clickPosition = (event.offsetX / audioProgress.offsetWidth) * audioPlayer.duration;
+  audioPlayer.currentTime = clickPosition;
+});
+
+document.getElementById('playPauseButton').addEventListener('click', function () {
+  if (audioPlayer.paused) {
+    audioPlayer.play();
+    this.textContent = '⏸️'; // change to pause icon
+  } else {
+    audioPlayer.pause();
+    this.textContent = '▶️'; // change to play icon
+  }
+});
+
+playPauseButton.addEventListener('click', function () {
+  if (audioPlayer.paused) {
+    audioPlayer.play();
+    playPauseButton.textContent = '⏸️'; // Change text to 'Pause'
+  } else {
+    audioPlayer.pause();
+    playPauseButton.textContent = '▶️'; // Change text to 'Play'
+  }
+});
+
+
+  </script>
+</body>
+</html>
